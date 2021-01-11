@@ -52,43 +52,34 @@ class ProductController extends Controller
                 $total+=$product->price*$quantitys[$key];
 
 
+                if($product->id==4){
+                    $offers += .1*$quantitys[$key]*$product->price;
+                }elseif($product->id==1&&$quantitys[$key]>=2){
+                   $q=$quantitys[$key]/2;
+                   $q1=(int)$q;
+
+                    $jacket=Product::where('id',3)->first();
+                  $offers +=$q1*.5*$jacket->price;
+             }
+
+
             }
              $taxes=$total*$tax;
             $totalAfterTax=$total+$taxes;
-
-            foreach ($products as $key=>$value)
-            {
-
-                $product = Product::where('id',$value)->first();
-                      if($product->id==4){
-                          $offers += .1*$quantitys[$key]*$product->price;
-                      }elseif($product->id==1&&$quantitys[$key]>=2){
-                         $q=$quantitys[$key]/4;
-                         $q1=(int)$q;
-
-
-                        $offers += $product->price*$quantitys[$key];
-                      }
+            $totalAfterDiscount=$totalAfterTax-$offers;
 
 
 
 
 
 
-
-
-            }
-
-
-
-
-return response()->json(['taxes'=>$taxes,'total'=>$total,'totalAfterTax'=>$totalAfterTax,'offers'=>$offers]);
+return response()->json(['taxes'=>$taxes,'total'=>$total,'totalAfterTax'=>$totalAfterTax,'offers'=>$offers,'totalAfterDiscount'=>$totalAfterDiscount]);
 
 
 
 
 
-                // return response()->json(['data'=>$order,'message'=>'success in making order','error'=>false]);
+
 
 
 
