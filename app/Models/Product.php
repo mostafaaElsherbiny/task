@@ -20,5 +20,7 @@ class Product extends Model
         }elseif(request()->current=='eg'){
             return $value*$this->eg;
         }
+
+        return $value;
     }
 }

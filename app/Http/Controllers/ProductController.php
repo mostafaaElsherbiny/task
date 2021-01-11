@@ -11,29 +11,27 @@ use Illuminate\Support\Facades\Validator;
 class ProductController extends Controller
 {
     public function order(Request $request){
-        $validator = Validator::make($request->all(), [
-            'total'=> 'required',
-            'payment_method'=> 'required',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //
+        // ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+        // if($validator->fails()){
+        //     return response()->json($validator->errors()->toJson(), 400);
+        // }
 
-     try{
 
-        $order=[];
-            DB::transaction(function() use($request,&$order)
-                   {
 
-                    $total=0;
+
+
+
                     $products =json_decode($request->product_ids);
                     $quantitys=json_decode($request->quantitys);
-                   if(count($products)!=count($quantitys)||count($products)){
+                   if(count($products)!=count($quantitys)){
                     throw new Exception('Error the quantity count not equal to product ids and the prices');
                    }
 
-
+                   $total=0;
+                   $tax=.14;
                 foreach ($products as $key=>$value)
             {
 
@@ -50,22 +48,24 @@ class ProductController extends Controller
                     throw new Exception('this product quantity is less than order quantity ');
                 }
 
+                $total+=$product->price*$quantitys[$key];
+
 
             }
+             $taxes=$total*$tax;
+            $totalAfterTax=$total+$taxes;
+
+
+return response()->json(['taxes'=>$taxes,'total'=>$total,'totalAfterTax'=>$totalAfterTax]);
 
 
 
 
 
-                });
+                // return response()->json(['data'=>$order,'message'=>'success in making order','error'=>false]);
 
 
-                return response()->json(['data'=>$order,'message'=>'success in making order','error'=>false]);
 
-
-     }catch(Exception $e){
-         return response()->json(['message'=>'Error in making this order repeat again','error'=>true]);
-     }
 
 
 
