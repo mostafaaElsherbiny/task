@@ -32,6 +32,7 @@ class ProductController extends Controller
 
                    $total=0;
                    $tax=.14;
+                   $offers=0;
                 foreach ($products as $key=>$value)
             {
 
@@ -55,8 +56,33 @@ class ProductController extends Controller
              $taxes=$total*$tax;
             $totalAfterTax=$total+$taxes;
 
+            foreach ($products as $key=>$value)
+            {
 
-return response()->json(['taxes'=>$taxes,'total'=>$total,'totalAfterTax'=>$totalAfterTax]);
+                $product = Product::where('id',$value)->first();
+                      if($product->id==4){
+                          $offers += .1*$quantitys[$key]*$product->price;
+                      }elseif($product->id==1&&$quantitys[$key]>=2){
+                         $q=$quantitys[$key]/4;
+                         $q1=(int)$q;
+
+
+                        $offers += $product->price*$quantitys[$key];
+                      }
+
+
+
+
+
+
+
+
+            }
+
+
+
+
+return response()->json(['taxes'=>$taxes,'total'=>$total,'totalAfterTax'=>$totalAfterTax,'offers'=>$offers]);
 
 
 
